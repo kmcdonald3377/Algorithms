@@ -1,4 +1,4 @@
-package AEB;
+package AE_B;
 
 import java.util.NoSuchElementException;
 

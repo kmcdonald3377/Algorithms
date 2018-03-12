@@ -1,4 +1,4 @@
-package AEB;
+package AE_B;
 
 public interface Stack<E> {
 	// Each Stack<E> object is a homogeneous stack whose elements are of type E.
