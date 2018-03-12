@@ -2,10 +2,11 @@ package AE_B;
 
 import java.util.Iterator;
 
+import AE_A.CountedElement;
 import javafx.scene.Node;
 
 public class BSTBag<E extends Comparable<E>> implements Bag
-{ //CountedElement<E>
+{
 	
 	///Inner Class/////
 	private static class Node <E extends Comparable<E>>
@@ -20,7 +21,7 @@ public class BSTBag<E extends Comparable<E>> implements Bag
 		}
 	}
 	
-	private Node<E> root;
+	private Node<CountedElement<E>> root;
 	
 	public BSTBag() 
 	{
@@ -48,15 +49,36 @@ public class BSTBag<E extends Comparable<E>> implements Bag
 	}
 
 	@Override
-	public int size() {
+	public int size() 
+	{
+		
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public boolean contains(Object element) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean contains(Object element) //should this be a node?
+	{
+		Node curr = root;
+		
+		for(;;) {
+			if(curr == null) 
+			{
+				return false;
+			}
+			else if(curr == element) 
+			{
+				return true;
+			}
+			else if(curr > element) 
+			{
+				curr = curr.left;
+			}
+			else if(curr < element) 
+			{
+				curr = curr.right;
+			}
+		}
 	}
 
 	@Override
@@ -82,38 +104,52 @@ public class BSTBag<E extends Comparable<E>> implements Bag
 	@Override
 	public void add(Object element) 
 	{
-		int direction = 0;
-		Node parent = null, curr = root;
-		for(;;) {
-			if(curr == null) 
-			{
-				Node<E> ins = new Node<E>(element);
-				if(root == null) 
-				{
-					root = ins;
-				}
-				else if(direction < 0) 
-				{
-					parent.left = ins;
-				}
-				else 
-				{
-					parent.right = ins;
-				}
-				return;
-			}
-			direction = element.compareTo(curr.element);
-			if(direction == 0) {
-				return;
-			}
-			parent = curr;
-			if(direction < 0) {
-				curr = curr.left;
-			}
-			else {
-				curr = curr.right;
-			}
-		}		
+		boolean isPresent = contains(element);
+		
+		if(isPresent) 
+		{
+			//loop until find the node and then increase the count by one
+		}
+		else //if not present already
+		{
+			//loop until find the node which belongs before it/is pointing to null then set it pointing to this new node
+		}
+		
+//		int direction = 0;
+//		Node parent = null, curr = root;
+//		for(;;) {
+//			if(curr == null) 
+//			{
+//				Node<CountedElement<E>> ins = new Node<CountedElement<E>>(element);
+//				if(root == null) 
+//				{
+//					root = ins;
+//				}
+//				else if(direction < 0) 
+//				{
+//					parent.left = ins;
+//				}
+//				else 
+//				{
+//					parent.right = ins;
+//				}
+//				return;
+//			}
+//			direction = element.compareTo(curr.element);
+//			if(direction == 0) 
+//			{
+//				return;
+//			}
+//			parent = curr;
+//			if(direction < 0) 
+//			{
+//				curr = curr.left;
+//			}
+//			else 
+//			{
+//				curr = curr.right;
+//			}
+//		}		
 	}
 
 	@Override
