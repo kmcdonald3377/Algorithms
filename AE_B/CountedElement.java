@@ -1,4 +1,4 @@
-package AE_A;
+package AE_B;
 
 
 
@@ -40,7 +40,7 @@ public class CountedElement<E extends Comparable<E>> implements Comparable<Count
 		{
 			this.count = count;
 		}
-		//if is at 0 then don't want to continue decreasing the value
+		//if 0 then do nothing - can't have minus number of elements
 	}
 	
 	public String toString() //this to string method will print both the element and the count of that element

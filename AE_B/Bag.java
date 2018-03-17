@@ -3,7 +3,8 @@ package AE_B;
 
 import java.util.Iterator;
 
-public interface Bag<E> extends Iterable<E> {
+public interface Bag<E> extends Iterable<E> 
+{
 	// Each Bag<E> object is a homogeneous bag whose
 	// members are of type E.
 	// ////////// Accessors ////////////
