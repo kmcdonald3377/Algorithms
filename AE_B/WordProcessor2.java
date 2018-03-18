@@ -30,7 +30,15 @@ public class WordProcessor2
 		bag.add(new CountedElement<>("Donkey"));
 		bag.remove(new CountedElement<>("Mouse"));
 		
-		System.out.println(bag.size());
+		Iterator test = bag.iterator();
+		String output = "";
+		
+		while(test.hasNext()) 
+		{
+			output += test.next();
+		}
+		
+		System.out.println(output);
 		
 		
 	}

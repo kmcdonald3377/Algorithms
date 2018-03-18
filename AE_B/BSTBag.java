@@ -1,8 +1,10 @@
 package AE_B;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.swing.text.Position;
 
@@ -10,7 +12,7 @@ import javafx.scene.Node;
 
 public class BSTBag<E extends Comparable<E>> implements Bag<CountedElement<E>>
 {
-	
+	private Stack<Node<CountedElement<E>>> bag = new LinkedStack<Node<CountedElement<E>>>();
 	private Node<CountedElement<E>> root;
 	
 	public BSTBag() 
@@ -297,22 +299,38 @@ public class BSTBag<E extends Comparable<E>> implements Bag<CountedElement<E>>
 		}
 	}
 
+	public Void helped(Node<CountedElement<E>> test) 
+	{
+		if(test.left != null) 
+		{
+			bag.push(test.left);
+			helped(test.left);
+		}
+		
+		if(test.right != null) 
+		{
+			bag.push(test.right);
+			helped(test.right);
+		}
+		
+		return null;
+	}
+	
 	@Override
 	public Iterator<CountedElement<E>> iterator() 
 	{
-		final Stack<Node<CountedElement<E>>> bag = new LinkedStack<Node<CountedElement<E>>>();
 		Node<CountedElement<E>> curr = root;
-		while(curr != null) 
-		{
-			bag.push(curr);
-			curr = curr.left;
-		}
+		bag.push(curr);
+		
+		helped(curr);
+		
 		return new Iterator<CountedElement<E>>() {
 
 			@Override
 			public boolean hasNext() 
 			{
-				return (!bag.empty());
+				return (!bag.empty()); //means once all elements have been popped will be none left in the stack
+				//so then bag will be empty
 			}
 
 			@Override
@@ -322,36 +340,16 @@ public class BSTBag<E extends Comparable<E>> implements Bag<CountedElement<E>>
 				{
 					throw new NoSuchElementException();
 				}
-				Node<CountedElement<E>> place = bag.pop();
-				Node<CountedElement<E>> curr = place.right;
-				while(curr != null) 
+				else 
 				{
-					bag.push(curr);
-					curr = curr.left;
+					Node<CountedElement<E>> place = bag.pop();
+					while(place.element.getCount() == 0) 
+					{
+						place = bag.pop();
+					}
+					return place.element;
 				}
-				return place.element;
 			}
-			
-		};
-		
+		};	
 	}
-	
-//	private class Iterator
-//	{
-//		private Stack<Node<CountedElement<E>>> track;
-//		
-//		private Iterator() 
-//		{
-//			track = new LinkedStack<Node<CountedElement<E>>>();
-////			for(Node<CountedElement<E>> curr = root) 
-////			{
-////				
-////			}
-//		}
-//		
-//		public boolean hasNext() {
-//			track.push(root);
-//		}
-//	}
-
 }
