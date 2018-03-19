@@ -19,27 +19,36 @@ public class WordProcessor2
 	{
 		
 		
-		BSTBag bag = new BSTBag();
-		bag.add(new CountedElement<>("Cat"));
-		bag.add(new CountedElement<>("Dog"));
-		bag.add(new CountedElement<>("Rabbit"));
-		bag.add(new CountedElement<>("Mouse"));
-		bag.add(new CountedElement<>("Hamster"));
-		bag.add(new CountedElement<>("Horse"));
-		bag.add(new CountedElement<>("Rat"));
-		bag.add(new CountedElement<>("Donkey"));
-		bag.remove(new CountedElement<>("Mouse"));
+		BSTBag<String> bag = new BSTBag<String>();
+		bag.add("Cat");
+		bag.add("Dog");
+		bag.add("Rabbit");
+		bag.add("Mouse");
+		bag.add("Hamster");
+		bag.add("Hamster");
+		bag.add("Hamster");
+		bag.add("Horse");
+		bag.add("Rat");
+		bag.add("Donkey");
+		bag.remove("Mouse");
+		bag.add("Cat");
+		bag.add("Cat");
+		bag.remove("Pokemon");
+
+		System.out.println(bag.size()); //this has to be called first or else the iterator is going to remove the count back down to 1
+		//need to make copy of everything rather than putting exact same object into iterator list
+		//could possibly mean before push then will push x number of objects
 		
 		Iterator test = bag.iterator();
 		String output = "";
 		
 		while(test.hasNext()) 
 		{
-			output += test.next();
+			output += test.next() + ", ";
 		}
 		
 		System.out.println(output);
-		
+		System.out.println(bag.size());
 		
 	}
 }

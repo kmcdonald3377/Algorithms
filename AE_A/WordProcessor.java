@@ -35,7 +35,7 @@ public class WordProcessor
 	 */
 	public static void main(String[] args)
 	{
-		FileReader[] arguments = new FileReader[3];
+		FileReader[] arguments = new FileReader[args.length];
 
 		try
 		{

@@ -51,8 +51,7 @@ public class CountedElement<E extends Comparable<E>> implements Comparable<Count
 		
 	public int compareTo(CountedElement<E> sC1) 
 	{
-		int result = this.getElement().compareTo(sC1.getElement());		
+		int result = this.compareTo(sC1);		
 		return result;
 	}
-
 }

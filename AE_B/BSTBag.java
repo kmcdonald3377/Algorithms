@@ -1,16 +1,13 @@
 package AE_B;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 import javax.swing.text.Position;
 
 import javafx.scene.Node;
 
-public class BSTBag<E extends Comparable<E>> implements Bag<CountedElement<E>>
+public class BSTBag<E extends Comparable<E>> implements Bag<E>
 {
 	private Stack<Node<CountedElement<E>>> bag = new LinkedStack<Node<CountedElement<E>>>();
 	private Node<CountedElement<E>> root;
@@ -22,11 +19,10 @@ public class BSTBag<E extends Comparable<E>> implements Bag<CountedElement<E>>
 	
 	///Inner Class/////
 	
-	
-	
 	private static class Node <E extends Comparable<E>>
 	{
-		protected E element;
+		//your node can have elements of type countedelement
+		protected E element; //think this needs to be countedelement?
 		protected Node<E> left, right;
 		
 		protected Node(E elem) 
@@ -35,60 +31,12 @@ public class BSTBag<E extends Comparable<E>> implements Bag<CountedElement<E>>
 			left = null;
 			right = null;
 		}
-
-		public Node<E> deleteTopmost() 
-		{
-			if(this.left == null) 
-			{
-				return this.right;
-			}
-			else if(this.right == null) 
-			{
-				return this.left;
-			}
-			else 
-			{
-				this.element = this.right.getLeftmost();
-				this.right = this.right.deleteLeftmost();
-				return this;
-			}
-		}
-
-		private Node<E> deleteLeftmost() 
-		{
-			if(this.left == null) 
-			{
-				return this.right;
-			}
-			else 
-			{
-				Node<E> parent = this, curr = this.left;
-				while(curr.left != null) 
-				{
-					parent = curr;
-					curr = curr.left;
-				}
-				parent.left = curr.right;
-				return this;
-			}
-		}
-
-		private E getLeftmost() 
-		{
-			Node<E> curr = this;
-			while(curr.left != null) 
-			{
-				curr = curr.left;
-			}
-			return curr.element;
-		}
 	}
 	
 	
 	
 	/////////////Accessors//////////////
 
-	
 	
 	@Override
 	public boolean isEmpty() //need to check if the depth is -1
@@ -109,20 +57,21 @@ public class BSTBag<E extends Comparable<E>> implements Bag<CountedElement<E>>
 		Node<CountedElement<E>> parent = null, curr = root;
 		int size = 0;
 		
-		if(root == null) 
+		if(curr == null) 
 		{
 			return 0;
 		}
-		else if(root.element.getCount() == 0) 
+		else if(curr.element.getCount() == 0) 
 		{
 			return (size(curr.left) + size(curr.right)); //this means will not count the parent node
 		}
 		else 
 		{
-			return (size(curr.left) + 1 + size(curr.right)); //will count the parent node
+			return (size(curr.left) + curr.element.getCount() + size(curr.right)); //will count the parent node
 		}
 	}
 	
+	//Helper method
 	public int size(Node<CountedElement<E>> node) 
 	{
 		if (node == null) 
@@ -135,13 +84,15 @@ public class BSTBag<E extends Comparable<E>> implements Bag<CountedElement<E>>
 		}
 		else
 		{
-			return (size(node.left) + 1 + size(node.right));
+			return (size(node.left) + node.element.getCount() + size(node.right));
 		}		
 	}
 
 	@Override
-	public boolean contains(CountedElement<E> element) {
+	public boolean contains(E element) 
+	{
 		Node<CountedElement<E>> curr = root;
+		CountedElement<E> element2 = new CountedElement<E>(element);
 		int direction = 0;
 				
 		for(;;) 
@@ -151,7 +102,7 @@ public class BSTBag<E extends Comparable<E>> implements Bag<CountedElement<E>>
 				return false;
 			}
 			
-			direction = element.compareTo(curr.element); //don't think this is quite correct
+			direction = element2.compareTo(curr.element); //don't think this is quite correct
 			
 			if(direction == 0) 
 			{
@@ -176,23 +127,26 @@ public class BSTBag<E extends Comparable<E>> implements Bag<CountedElement<E>>
 	}
 
 	@Override
-	public boolean equals(Bag that) 
+	public boolean equals(Bag that)
 	{
-		if(this == that) 
+		BSTBag<E> next = (BSTBag<E>) that;
+		
+		Iterator<E> current = this.iterator();
+		Iterator<E> nextOne = next.iterator();
+				
+		while(current.hasNext() && nextOne.hasNext()) 
 		{
-			return true;
+			if(!current.next().equals(nextOne.next())) 
+			{
+				return false;
+			}
 		}
-		else 
-		{
-			return false;
-		}
+		return true;
 	}
 
 	
 	
 	////////////Transformers//////////
-	
-	
 	
 	@Override
 	public void clear() 
@@ -201,16 +155,17 @@ public class BSTBag<E extends Comparable<E>> implements Bag<CountedElement<E>>
 	}
 
 	@Override
-	public void add(CountedElement<E> element) 
+	public void add(E element) 
 	{
 		int direction = 0;
 		Node<CountedElement<E>> parent = null, curr = root;
+		CountedElement<E> element2 = new CountedElement<E>(element);
 		
 		for(;;) 
 		{
 			if(curr == null) //if what current has been assigned to is null
 			{
-				Node<CountedElement<E>> ins = new Node<CountedElement<E>>(element);
+				Node<CountedElement<E>> ins = new Node<CountedElement<E>>(element2);
 				if(root == null) //will not get past this until root has been set
 				{
 					root = ins; //if this is going to be the first node in the tree basically
@@ -225,7 +180,7 @@ public class BSTBag<E extends Comparable<E>> implements Bag<CountedElement<E>>
 				}
 				return;
 			}
-			direction = element.compareTo(curr.element);
+			direction = element2.compareTo(curr.element);
 			
 			if(direction == 0) 
 			{
@@ -246,10 +201,11 @@ public class BSTBag<E extends Comparable<E>> implements Bag<CountedElement<E>>
 	}
 
 	@Override
-	public void remove(CountedElement<E> element) 
+	public void remove(E element) 
 	{
 		int direction = 0;
 		Node<CountedElement<E>> parent = null, curr = root;
+		CountedElement<E> element2 = new CountedElement<E>(element);
 		for(;;) 
 		{
 			if(curr == null) //there has not been a match in the tree and therefore cannot delete it
@@ -257,34 +213,11 @@ public class BSTBag<E extends Comparable<E>> implements Bag<CountedElement<E>>
 				return; //can't delete what's not there
 			}
 			
-			direction = element.compareTo(curr.element);
+			direction = element2.compareTo(curr.element);
 			
 			if(direction == 0) 
 			{
 				curr.element.setCount(curr.element.getCount()-1);
-				
-				//the following would only be applicable if a hard delete was intended to be undertaken. This has been left in as unsure
-				//whether this was also wanted.
-//				if(curr.element.getCount() > 1) 
-//				{
-//					curr.element.setCount(curr.element.getCount()-1);
-//				}
-//				else 
-//				{
-//					Node<CountedElement<E>> del = curr.deleteTopmost(); //need to do this still
-//					if(curr == root) //deciding which will take removed nodes place
-//					{
-//						root = del;
-//					}
-//					else if(curr == parent.left)
-//					{
-//						parent.left = del;
-//					}
-//					else 
-//					{
-//						parent.right = del;
-//					}
-//				}
 				return;
 			}
 			parent = curr;
@@ -299,42 +232,51 @@ public class BSTBag<E extends Comparable<E>> implements Bag<CountedElement<E>>
 		}
 	}
 
-	public Void helped(Node<CountedElement<E>> test) 
+	public void addingToStack(Node<CountedElement<E>> test) 
 	{
 		if(test.left != null) 
 		{
-			bag.push(test.left);
-			helped(test.left);
+			for(int i = 0; i < test.left.element.getCount(); i++) 
+			{
+				bag.push(test.left);
+			}
+			addingToStack(test.left);
 		}
 		
 		if(test.right != null) 
 		{
-			bag.push(test.right);
-			helped(test.right);
+			for(int i = 0; i < test.right.element.getCount(); i++) 
+			{
+				bag.push(test.right);
+			}
+			addingToStack(test.right);
 		}
-		
-		return null;
 	}
 	
 	@Override
-	public Iterator<CountedElement<E>> iterator() 
+	public Iterator<E> iterator() 
 	{
 		Node<CountedElement<E>> curr = root;
-		bag.push(curr);
+		if(curr != null) 
+		{
+			for(int i = 0; i < curr.element.getCount(); i++) 
+			{
+				bag.push(curr);
+			}
+		}
 		
-		helped(curr);
+		addingToStack(curr);
 		
-		return new Iterator<CountedElement<E>>() {
+		return new Iterator<E>() {
 
 			@Override
 			public boolean hasNext() 
 			{
-				return (!bag.empty()); //means once all elements have been popped will be none left in the stack
-				//so then bag will be empty
+				return (!bag.empty());
 			}
 
 			@Override
-			public CountedElement<E> next() 
+			public E next() 
 			{
 				if(!hasNext()) 
 				{
@@ -343,11 +285,13 @@ public class BSTBag<E extends Comparable<E>> implements Bag<CountedElement<E>>
 				else 
 				{
 					Node<CountedElement<E>> place = bag.pop();
+					
 					while(place.element.getCount() == 0) 
 					{
 						place = bag.pop();
 					}
-					return place.element;
+					
+					return (E)place.element.getElement();
 				}
 			}
 		};	
