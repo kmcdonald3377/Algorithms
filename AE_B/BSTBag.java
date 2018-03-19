@@ -3,43 +3,53 @@ package AE_B;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import javax.swing.text.Position;
-
-import javafx.scene.Node;
-
+/**
+ * 
+ * @author Student ID: 2081415M
+ * @author Student Name: Kelly McDonald
+ *
+ * @param <E>
+ */
 public class BSTBag<E extends Comparable<E>> implements Bag<E>
 {
-	private Stack<Node<CountedElement<E>>> bag = new LinkedStack<Node<CountedElement<E>>>();
-	private Node<CountedElement<E>> root;
-	
+	private Node<E> root;
+
+	/**
+	 * Constructor.
+	 */
 	public BSTBag() 
 	{
 		root = null;
 	}
+
 	
-	///Inner Class/////
-	
+	/**
+	 * Class creating node
+	 * @param <E>
+	 */
 	private static class Node <E extends Comparable<E>>
 	{
-		//your node can have elements of type countedelement
-		protected E element; //think this needs to be countedelement?
+		protected CountedElement<E> element;
 		protected Node<E> left, right;
-		
-		protected Node(E elem) 
+
+		/**
+		 * Constructor
+		 * @param elem
+		 */
+		protected Node(CountedElement<E> elem) 
 		{
 			element = elem;
 			left = null;
 			right = null;
 		}
 	}
-	
-	
-	
-	/////////////Accessors//////////////
 
-	
+
+	/**
+	 * This method will return a boolean which will declare whether this BST is empty or not
+	 */
 	@Override
-	public boolean isEmpty() //need to check if the depth is -1
+	public boolean isEmpty()
 	{
 		if(root == null) 
 		{
@@ -51,28 +61,36 @@ public class BSTBag<E extends Comparable<E>> implements Bag<E>
 		}
 	}
 
+	/**
+	 * This method will return the size of the BST, which is the number of nodes within the tree.
+	 * I have assumed that in addition to the above, due to the manner of this tree that it will also include multiple counts of one node if 
+	 * the element has a count higher than 1.
+	 */
 	@Override
 	public int size() 
 	{
-		Node<CountedElement<E>> parent = null, curr = root;
-		int size = 0;
-		
+		Node<E> curr = root;
+
 		if(curr == null) 
 		{
 			return 0;
 		}
 		else if(curr.element.getCount() == 0) 
 		{
-			return (size(curr.left) + size(curr.right)); //this means will not count the parent node
+			return (size(curr.left) + size(curr.right)); //will not count the parent node as it is product of 'soft-delete'
 		}
 		else 
 		{
-			return (size(curr.left) + curr.element.getCount() + size(curr.right)); //will count the parent node
+			return (size(curr.left) + curr.element.getCount() + size(curr.right)); //will count the parent node * by the count of this element
 		}
 	}
-	
-	//Helper method
-	public int size(Node<CountedElement<E>> node) 
+
+	/**
+	 * This method is a recursive helper method for size(). This is responsible for assisting calculating the total size of the tree.
+	 * @param node
+	 * @return
+	 */
+	public int size(Node<E> node) 
 	{
 		if (node == null) 
 		{
@@ -80,7 +98,7 @@ public class BSTBag<E extends Comparable<E>> implements Bag<E>
 		}
 		else if(node.element.getCount() == 0) 
 		{
-			return (size(node.left) + size(node.right)); //will not return the count of this node as 'soft-delete'
+			return (size(node.left) + size(node.right));
 		}
 		else
 		{
@@ -88,25 +106,29 @@ public class BSTBag<E extends Comparable<E>> implements Bag<E>
 		}		
 	}
 
+	/**
+	 * This method is responsible for identifying if the element passed in is already contained in the BST.
+	 * If the element is already contained then the boolean value of true will be returned. If not, then false will be returned.
+	 */
 	@Override
 	public boolean contains(E element) 
 	{
-		Node<CountedElement<E>> curr = root;
-		CountedElement<E> element2 = new CountedElement<E>(element);
+		Node<E> curr = root;
+		CountedElement<E> elem = new CountedElement<E>(element);
 		int direction = 0;
-				
+
 		for(;;) 
 		{
 			if(curr == null) 
 			{
 				return false;
 			}
-			
-			direction = element2.compareTo(curr.element); //don't think this is quite correct
-			
+
+			direction = elem.compareTo(curr.element);
+
 			if(direction == 0) 
 			{
-				if(curr.element.getCount() == 0) //put in so if count is at 0 then wont
+				if(curr.element.getCount() == 0) //put in so if count is at 0 then will not count the element as present
 				{
 					return false;
 				}
@@ -115,7 +137,7 @@ public class BSTBag<E extends Comparable<E>> implements Bag<E>
 					return true;
 				}
 			}
-			else if(direction < 0) //compare to 0? or curr.element? must be former or else why bother with the direction=element.compareTo...etc
+			else if(direction < 0) 
 			{
 				curr = curr.left;
 			}
@@ -126,14 +148,18 @@ public class BSTBag<E extends Comparable<E>> implements Bag<E>
 		}
 	}
 
+	/**
+	 * This method is responsible for identifying if the Bag object which is passed in has the same contents as this current Bag.
+	 * If the contents are the same then true will be returned; if not then false will be returned.
+	 */
 	@Override
 	public boolean equals(Bag that)
 	{
 		BSTBag<E> next = (BSTBag<E>) that;
-		
+
 		Iterator<E> current = this.iterator();
 		Iterator<E> nextOne = next.iterator();
-				
+
 		while(current.hasNext() && nextOne.hasNext()) 
 		{
 			if(!current.next().equals(nextOne.next())) 
@@ -144,35 +170,37 @@ public class BSTBag<E extends Comparable<E>> implements Bag<E>
 		return true;
 	}
 
-	
-	
-	////////////Transformers//////////
-	
+	/**
+	 * This method will clear the current tree
+	 */
 	@Override
 	public void clear() 
 	{
 		root = null;		
 	}
 
+	/**
+	 * This method is responsible for adding a new generic element to the tree
+	 */
 	@Override
 	public void add(E element) 
 	{
 		int direction = 0;
-		Node<CountedElement<E>> parent = null, curr = root;
-		CountedElement<E> element2 = new CountedElement<E>(element);
-		
+		Node<E> parent = null, curr = root;
+		CountedElement<E> elem = new CountedElement<E>(element);
+
 		for(;;) 
 		{
-			if(curr == null) //if what current has been assigned to is null
+			if(curr == null)
 			{
-				Node<CountedElement<E>> ins = new Node<CountedElement<E>>(element2);
-				if(root == null) //will not get past this until root has been set
+				Node<E> ins = new Node<E>(elem);
+				if(root == null)
 				{
-					root = ins; //if this is going to be the first node in the tree basically
+					root = ins; //ins element is the first element in the tree
 				}
-				else if(direction < 0) //direction will have been set because these will only loop through these 
-				{						//statements once direction has been set further down
-					parent.left = ins; //parent will not be null as already set in prior loop
+				else if(direction < 0)
+				{
+					parent.left = ins;
 				}
 				else 
 				{
@@ -180,47 +208,59 @@ public class BSTBag<E extends Comparable<E>> implements Bag<E>
 				}
 				return;
 			}
-			direction = element2.compareTo(curr.element);
 			
+			direction = elem.compareTo(curr.element);
+
 			if(direction == 0) 
 			{
+				//This bag already has this element so don't need to add full node. But will increase the count of this element to display there is
+				//multiple copies of this element.
 				curr.element.setCount(curr.element.getCount()+1);
-				return; //do nothing here as the element has already been added to the tree - but want to 
-				//increase the number for this element?
+				return;
 			}
+			
 			parent = curr;
-			if(direction < 0) //curr is equal to something and element is less than this
+			
+			if(direction < 0)
 			{
 				curr = curr.left;
 			}
-			else if(direction > 0) //curr is equal to something and element is greater than this
+			else if(direction > 0)
 			{
 				curr = curr.right;
 			}
 		}
 	}
 
+	/**
+	 * This method is responsible for removing a generic element from the tree.
+	 * This will be a 'soft-delete' and as such the node will not be removed from the tree but rather the count of that element 
+	 * will decrease by one.
+	 */
 	@Override
 	public void remove(E element) 
 	{
 		int direction = 0;
-		Node<CountedElement<E>> parent = null, curr = root;
-		CountedElement<E> element2 = new CountedElement<E>(element);
+		Node<E> parent = null, curr = root;
+		CountedElement<E> elem = new CountedElement<E>(element);
 		for(;;) 
 		{
-			if(curr == null) //there has not been a match in the tree and therefore cannot delete it
+			if(curr == null) //there has not been a match in the tree and therefore cannot delete what is not there
 			{
-				return; //can't delete what's not there
+				return;
 			}
-			
-			direction = element2.compareTo(curr.element);
-			
+
+			direction = elem.compareTo(curr.element);
+
 			if(direction == 0) 
 			{
+				//The element has been found in the tree and rather than delete the whole node, instead will decrease the count of the element.
 				curr.element.setCount(curr.element.getCount()-1);
 				return;
 			}
+			
 			parent = curr;
+			
 			if(direction < 0) 
 			{
 				curr = parent.left;
@@ -232,68 +272,140 @@ public class BSTBag<E extends Comparable<E>> implements Bag<E>
 		}
 	}
 
-	public void addingToStack(Node<CountedElement<E>> test) 
-	{
-		if(test.left != null) 
-		{
-			for(int i = 0; i < test.left.element.getCount(); i++) 
-			{
-				bag.push(test.left);
-			}
-			addingToStack(test.left);
-		}
-		
-		if(test.right != null) 
-		{
-			for(int i = 0; i < test.right.element.getCount(); i++) 
-			{
-				bag.push(test.right);
-			}
-			addingToStack(test.right);
-		}
-	}
-	
+	/**
+	 * This method will return an instance of an Iterator.
+	 */
 	@Override
 	public Iterator<E> iterator() 
 	{
-		Node<CountedElement<E>> curr = root;
-		if(curr != null) 
+		return new BagIterator();
+	}
+
+	
+	/**
+	 * Class creating iterator methods
+	 */
+	private class BagIterator implements Iterator<E>
+	{
+		private Stack<Node<E>> bag;
+
+		/**
+		 * Constructor
+		 */
+		private BagIterator() 
 		{
-			for(int i = 0; i < curr.element.getCount(); i++) 
+			bag = new LinkedStack<Node<E>>();
+			for(Node<E> curr = root; curr != null; curr = curr.left) 
 			{
+				Node<E> current = new Node<E>(new CountedElement<E>(curr.element.getElement(), curr.element.getCount()));
 				bag.push(curr);
 			}
+//			Node<E> curr = root;
+//			if(curr != null) 
+//			{
+//				for(int i = 0; i < curr.element.getCount(); i++) 
+//				{
+//					bag.push(curr); //add this node as many times as it has a count
+//				}
+//
+//				addingToStack(curr); //calling recursive method
+//			}
 		}
-		
-		addingToStack(curr);
-		
-		return new Iterator<E>() {
 
-			@Override
-			public boolean hasNext() 
+		/**
+		 * This is a recursive, helper method assisting in adding all tree elements to the Stack-bag
+		 * @param curr
+		 */
+		public void addingToStack(Node<E> curr) 
+		{
+			if(curr.left != null) 
 			{
-				return (!bag.empty());
+				for(int i = 0; i < curr.left.element.getCount(); i++) 
+				{
+					bag.push(curr.left);
+				}
+				addingToStack(curr.left);
 			}
 
-			@Override
-			public E next() 
+			if(curr.right != null) 
 			{
-				if(!hasNext()) 
+				for(int i = 0; i < curr.right.element.getCount(); i++) 
 				{
-					throw new NoSuchElementException();
+					bag.push(curr.right);
 				}
-				else 
-				{
-					Node<CountedElement<E>> place = bag.pop();
-					
-					while(place.element.getCount() == 0) 
-					{
-						place = bag.pop();
-					}
-					
-					return (E)place.element.getElement();
-				}
+				addingToStack(curr.right);
 			}
-		};	
+		}
+
+		/**
+		 * This method is responsible for identifying if there is another element left within the Stack.
+		 */
+		@Override
+		public boolean hasNext() 
+		{
+			return (!bag.empty());
+		}
+
+		/**
+		 * This method will return the generic element of the next Node in the Stack provided that it has a count higher than 0.
+		 */
+		@Override
+		public E next() 
+		{
+			if(!hasNext()) 
+			{
+				throw new NoSuchElementException();
+			}
+			else 
+			{
+				Node<E> place = bag.peek();
+				
+				for(Node<E> curr = place.right; curr != null; curr = curr.left) 
+				{
+					Node<E> current = new Node<E>(new CountedElement<E>(curr.element.getElement(), curr.element.getCount()));
+					bag.push(current);
+//					while(place.element.getCount() == 0) 
+//					{
+//						Node<E> current = new Node<E>(new CountedElement<E>(curr.element.getElement(), curr.element.getCount()));
+//						bag.push(current);
+//						place = bag.pop();
+//					}
+				}
+				if(place.element.getCount() == 0) {
+					place = bag.pop();
+				}
+				
+				if(place.element.getCount() == 1) 
+				{
+					place = bag.pop();
+				}
+				if(place.element.getCount() > 1) 
+				{
+					place.element.setCount(place.element.getCount()-1);
+				}
+				
+//				if(place.element.getCount() == 0) 
+//				{
+//					place = bag.pop();
+//					return null;
+//				}
+//				else if(place.element.getCount() == 1) 
+//				{
+//					place = bag.pop();
+//				}
+//				else if(place.element.getCount() > 1) 
+//				{
+//					place.element.setCount(place.element.getCount()-1);
+//				}
+
+//				while(place.element.getCount() == 0) 
+//				{
+//					place = bag.pop();
+//				}
+
+				return place.element.getElement();
+			}
+		}
+
 	}
 }

@@ -21,12 +21,14 @@ public class WordProcessor2
 		
 		BSTBag<String> bag = new BSTBag<String>();
 		bag.add("Cat");
+		bag.add("Alpaca");
 		bag.add("Dog");
 		bag.add("Rabbit");
 		bag.add("Mouse");
 		bag.add("Hamster");
 		bag.add("Hamster");
 		bag.add("Hamster");
+		bag.add("Banana");
 		bag.add("Horse");
 		bag.add("Rat");
 		bag.add("Donkey");
@@ -35,9 +37,7 @@ public class WordProcessor2
 		bag.add("Cat");
 		bag.remove("Pokemon");
 
-		System.out.println(bag.size()); //this has to be called first or else the iterator is going to remove the count back down to 1
-		//need to make copy of everything rather than putting exact same object into iterator list
-		//could possibly mean before push then will push x number of objects
+		System.out.println(bag.size());
 		
 		Iterator test = bag.iterator();
 		String output = "";

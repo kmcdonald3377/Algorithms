@@ -1,7 +1,5 @@
 package AE_A;
 
-
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Collections;
@@ -9,11 +7,23 @@ import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 
+
+/**
+ * 
+ * @author Student ID: 2081415M
+ * @author Student Name: Kelly McDonald
+ *
+ */
 public class WordProcessor
 {
+	/**
+	 * This method will return the string which is to be displayed to the console
+	 * @param inputSet
+	 * @return
+	 */
 	private static <E> String displaySet(Set<E> inputSet)
 	{
-		String sb = "";
+		String output = "";
 		int count = 0;
 
 		for(E e : inputSet)
@@ -21,16 +31,17 @@ public class WordProcessor
 			if (count==5) 
 			{
 				count = 0;
-				sb += "\n";
+				output += "\n";
 			}
-			sb += e.toString() + ", ";
+			output += e.toString() + ", ";
 			count++;
 		}
-
-		return sb;
+		
+		return output;
 	}
 
 	/**
+	 * Main method
 	 * @param args
 	 */
 	public static void main(String[] args)
@@ -41,7 +52,7 @@ public class WordProcessor
 		{
 			for(int i = 0; i < args.length; i++)
 			{
-				arguments[i] = new FileReader(args[i]);
+				arguments[i] = new FileReader(args[i]); //will create a FileReader for every file passed into the main method
 			}
 		}
 		catch (FileNotFoundException e)
@@ -58,19 +69,20 @@ public class WordProcessor
 
 			while(scanner.hasNext())
 			{
-				String w = scanner.next();
+				String word = scanner.next();
 
-				if(!wordSet.contains(w) || wordSet.isEmpty())
+				if(!wordSet.contains(word) || wordSet.isEmpty())
 				{
-					wordSet.add(w);
-					countedWordSet.add(new CountedElement<String>(w, 1)); //should always be 1 here as this is the first instance of this word
+					wordSet.add(word);
+					countedWordSet.add(new CountedElement<String>(word, 1)); //will always be 1 here as this is the first instance of this word
 				}
 				else
 				{
-					for(CountedElement<String> t : countedWordSet)
+					for(CountedElement<String> element : countedWordSet)
 					{
-						if(t.getElement().equals(w)) {
-							t.setCount(t.getCount()+1);
+						if(element.getElement().equals(word)) 
+						{
+							element.setCount(element.getCount()+1);
 						}
 					}
 				}
@@ -80,6 +92,5 @@ public class WordProcessor
 		}
 
 		System.out.println(displaySet(countedWordSet));
-
 	}
 }
